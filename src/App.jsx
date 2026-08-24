@@ -10,6 +10,7 @@ function AppContent() {
     { id: 2, text: "Practice useRef", completed: false },
     { id: 3, text: "Build project", completed: false }
   ]);
+  const [filter, setFilter] = useState("all");
   const { theme } = useTheme();
 
   function addTask(taskText) {
@@ -29,6 +30,16 @@ function AppContent() {
     );
   }
 
+  function clearCompleted() {
+    setTasks(tasks.filter((task) => !task.completed));
+  }
+
+  const visibleTasks = tasks.filter((task) => {
+    if (filter === "active") return !task.completed;
+    if (filter === "completed") return task.completed;
+    return true;
+  });
+
   const containerStyle = {
     minHeight: "100vh",
     backgroundColor: theme === "light" ? "#ffffff" : "#1e1e1e",
@@ -41,7 +52,17 @@ function AppContent() {
     <div style={containerStyle}>
       <Header />
       <TaskInput onAddTask={addTask} />
-      <TaskList tasks={tasks} onDeleteTask={deleteTask} onToggleTask={toggleTask} />
+
+      <div style={{ margin: "12px 0" }}>
+        <button onClick={() => setFilter("all")}>All</button>
+        <button onClick={() => setFilter("active")}>Active</button>
+        <button onClick={() => setFilter("completed")}>Completed</button>
+      </div>
+
+      <TaskList tasks={visibleTasks} onDeleteTask={deleteTask} onToggleTask={toggleTask} />
+      <button onClick={clearCompleted} style={{ marginTop: "12px" }}>
+        Clear Completed
+      </button>
     </div>
   );
 }
